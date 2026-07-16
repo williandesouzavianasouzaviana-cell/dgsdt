@@ -1,1 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anas Paladini Joias - Página Institucional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            border: 1px solid #d4af37;
+        }
+
+        /* Cabeçalho */
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 30px 40px;
+            border-bottom: 4px solid #d4af37;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #d4af37;
+            font-size: 28px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .header .subtitle {
+            color: #aaaaaa;
+            font-size: 14px;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        .header .status {
+            display: inline-block;
+            margin-top: 12px;
+            background: #2e7d32;
+            color: #fff;
+            padding: 6px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Conteúdo */
+        .content {
+            padding: 30px 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .header h1 {
+                font-size: 20px;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .section {
+            background: #f8f8f8;
+            padding: 20px 24px;
+            border-radius: 14px;
+            border-left: 4px solid #d4af37;
+            transition: 0.2s;
+        }
+
+        .section:hover {
+            background: #f0f0f0;
+        }
+
+        .section h2 {
+            font-size: 16px;
+            text-transform: uppercase;
+            color: #d4af37;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 i {
+            font-style: normal;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 15px;
+            border-bottom: 1px dashed #e8e8e8;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #555;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #1a1a1a;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .info-value strong {
+            color: #000;
+        }
+
+        .info-value a {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .info-value a:hover {
+            color: #d4af37;
+            text-decoration: underline;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-item .icon {
+            font-size: 20px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .contact-item a {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .contact-item a:hover {
+            color: #d4af37;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #d4af37;
+            color: #1a1a1a;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+
+        .cnae-principal {
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .cnae-secundaria {
+            font-weight: 400;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .maps-link {
+            display: inline-block;
+            margin-top: 12px;
+            background: #d4af37;
+            color: #1a1a1a;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            border: 1px solid #d4af37;
+        }
+
+        .maps-link:hover {
+            background: transparent;
+            color: #d4af37;
+            border: 1px solid #d4af37;
+        }
+
+        .footer {
+            background: #f0f0f0;
+            padding: 15px 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #777;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer span {
+            color: #d4af37;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <!-- TOPO -->
+    <div class="header">
+        <h1>✨ Anas Paladini Joias</h1>
+        <div class="subtitle">Anas Paladini Comercio de Joias LTDA</div>
+        <div class="status">✓ Situação Cadastral: ATIVA</div>
+    </div>
+
+    <!-- CONTEÚDO -->
+    <div class="content">
+
+        <div class="grid">
+
+            <!-- COLUNA 1 - DADOS CADASTRAIS -->
+            <div class="section">
+                <h2><i>📋</i> Identificação</h2>
+                <div class="info-row">
+                    <span class="info-label">CNPJ</span>
+                    <span class="info-value"><strong>28.311.758/0001-60</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Inscrição Estadual (SP)</span>
+                    <span class="info-value">647.895.107.116</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Razão Social</span>
+                    <span class="info-value">Anas Paladini Comercio de Joias LTDA</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Data Abertura</span>
+                    <span class="info-value">01/08/2017 <span style="color:#888; font-weight:400;">(8 anos, 11 meses e 15 dias)</span></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Natureza Jurídica</span>
+                    <span class="info-value">Sociedade Empresária Limitada</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Porte</span>
+                    <span class="info-value">Empresa de Pequeno Porte</span>
+                </div>
+            </div>
+
+            <!-- COLUNA 2 - REGIME E CAPITAL -->
+            <div class="section">
+                <h2><i>⚖️</i> Regime & Capital</h2>
+                <div class="info-row">
+                    <span class="info-label">Tipo</span>
+                    <span class="info-value"><strong>Matriz</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Opção pelo MEI</span>
+                    <span class="info-value">Não</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Opção pelo Simples</span>
+                    <span class="info-value">Sim <span style="color:#888; font-weight:400;">(desde 01/08/2017)</span></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Capital Social</span>
+                    <span class="info-value"><strong>R$ 50.000,00</strong></span>
+                </div>
+                <div class="info-row" style="border-bottom: none; margin-top: 8px;">
+                    <span class="info-label">Situação</span>
+                    <span class="info-value" style="color:#2e7d32; font-weight:700;">ATIVA</span>
+                </div>
+            </div>
+
+            <!-- CONTATOS (ocupa 2 colunas) -->
+            <div class="section full-width">
+                <h2><i>📞</i> Contatos</h2>
+                <div class="contact-item">
+                    <span class="icon">📧</span>
+                    <a href="mailto:paladini.joalheria@gmail.com">paladini.joalheria@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">📱</span>
+                    <a href="tel:+171733012030">(17) 3301-2030</a> <span class="tag">Fixo</span>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">💬</span>
+                    <a href="https://wa.me/5517988436625" target="_blank">(17) 98843-6625</a> <span class="tag">WhatsApp</span>
+                </div>
+            </div>
+
+            <!-- ENDEREÇO (ocupa 2 colunas) -->
+            <div class="section full-width">
+                <h2><i>📍</i> Localização</h2>
+                <div style="display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.6;">
+                    <p><strong>Logradouro:</strong> Rua Carlos Avila Borges, 480</p>
+                    <p><strong>Bairro:</strong> Condominio Village Santa Helena</p>
+                    <p><strong>CEP:</strong> 15091-600</p>
+                    <p><strong>Município:</strong> São José do Rio Preto - SP</p>
+                </div>
+                <div style="margin-top: 12px; background: #eee; padding: 12px 16px; border-radius: 10px; font-size: 14px; border-left: 3px solid #d4af37;">
+                    <strong>Para correspondência:</strong><br>
+                    Anas Paladini Comercio de Joias LTDA<br>
+                    Rua Carlos Avila Borges 480, Condominio Village Santa Helena<br>
+                    São José do Rio Preto - SP, 15091-600
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Rua+Carlos+Avila+Borges+480+São+José+do+Rio+Preto+SP" 
+                   target="_blank" class="maps-link">
+                   🗺️ Procurar no Google Maps
+                </a>
+            </div>
+
+            <!-- ATIVIDADES CNAE (ocupa 2 colunas) -->
+            <div class="section full-width">
+                <h2><i>🏷️</i> Atividades - CNAEs</h2>
+                <div style="margin-bottom: 12px; padding: 12px 16px; background: #1a1a1a; color: #d4af37; border-radius: 10px;">
+                    <div style="font-weight: 700; font-size: 15px;">Principal:</div>
+                    <div style="font-size: 16px; color: #fff;">47.83-1-01 - Comércio varejista de artigos de joalheria</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; padding-left: 8px;">
+                    <div><span style="font-weight:600; color:#555;">Secundária 1:</span> 74.90-1-04 - Atividades de intermediação e agenciamento de serviços e negócios em geral, exceto imobiliários</div>
+                    <div><span style="font-weight:600; color:#555;">Secundária 2:</span> 32.11-6-02 - Fabricação de artefatos de joalheria e ourivesaria</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RODAPÉ -->
+    <div class="footer">
+        <span>Anas Paladini Comercio de Joias LTDA</span> | CNPJ 28.311.758/0001-60 | © 2026
+    </div>
+
+</div>
+
+</body>
+</html>
