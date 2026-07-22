@@ -3,20 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificação de Segurança</title>
+    <title>Verificação de segurança - reCAPTCHA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --recaptcha-blue: #1a73e8;
-            --recaptcha-blue-hover: #1557b0;
-            --border-color: #d3d3d3;
-            --bg-white: #ffffff;
-            --bg-gray: #f9f9f9;
-            --text-dark: #333333;
-            --text-gray: #757575;
-            --success-green: #34a853;
-            --error-red: #ea4335;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -24,8 +15,8 @@
         }
 
         body {
-            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-            background: #f0f2f5;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: #f2f2f2;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,225 +26,226 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Container principal - imita o card do reCAPTCHA */
-        .recaptcha-wrapper {
-            background: var(--bg-white);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            width: 100%;
-            max-width: 340px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: box-shadow 0.3s ease;
+        /* Container principal do reCAPTCHA */
+        .g-recaptcha {
+            background: #fff;
+            border: 1px solid #d3d3d3;
+            border-radius: 3px;
+            width: 304px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.2s ease;
+            position: relative;
         }
 
-        .recaptcha-wrapper:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        .g-recaptcha:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
-        /* Área do checkbox principal */
-        .recaptcha-box {
+        /* Linha principal do checkbox */
+        .recaptcha-checkbox-border {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 18px;
+            padding: 12px 14px;
             cursor: pointer;
-            gap: 12px;
             min-height: 60px;
-            transition: background 0.2s ease;
+            background: #fff;
+            border-radius: 3px;
+            transition: background 0.15s ease;
         }
 
-        .recaptcha-box:hover {
+        .recaptcha-checkbox-border:hover {
             background: #fafbfc;
         }
 
-        .recaptcha-left {
+        .recaptcha-checkbox-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-shrink: 0;
         }
 
-        /* Checkbox customizado */
-        .custom-checkbox {
+        /* Caixa do checkbox (exatamente como no reCAPTCHA) */
+        .recaptcha-checkbox {
             width: 28px;
             height: 28px;
-            border: 2px solid #9e9e9e;
+            border: 2px solid #c1c1c1;
             border-radius: 2px;
             background: #fff;
             position: relative;
             flex-shrink: 0;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .custom-checkbox.checked {
-            background: var(--success-green);
-            border-color: var(--success-green);
-            animation: popCheck 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .recaptcha-checkbox.checked {
+            background: #1a73e8;
+            border-color: #1a73e8;
+            animation: checkboxPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes popCheck {
-            0% {
-                transform: scale(0.8);
-            }
-            50% {
-                transform: scale(1.15);
-            }
-            100% {
-                transform: scale(1);
-            }
+        @keyframes checkboxPop {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Ícone de visto */
-        .check-icon {
+        .check-mark {
             opacity: 0;
             transform: scale(0) rotate(-45deg);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #fff;
             font-size: 16px;
             font-weight: bold;
             line-height: 1;
         }
 
-        .custom-checkbox.checked .check-icon {
+        .recaptcha-checkbox.checked .check-mark {
             opacity: 1;
             transform: scale(1) rotate(0deg);
         }
 
-        /* Spinner de carregamento */
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid #e0e0e0;
-            border-top-color: var(--recaptcha-blue);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        /* Spinner giratório (substitui o checkbox durante verificação) */
+        .recaptcha-spinner {
+            width: 28px;
+            height: 28px;
             display: none;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
         }
 
-        .spinner.active {
-            display: block;
+        .recaptcha-spinner.active {
+            display: flex;
         }
 
-        .custom-checkbox.loading {
-            display: none;
-        }
-
-        .custom-checkbox.loading+.spinner {
-            display: block;
+        .recaptcha-spinner .circle {
+            width: 22px;
+            height: 22px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #1a73e8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         /* Texto "Não sou robô" */
         .recaptcha-label {
-            font-size: 15px;
-            color: var(--text-dark);
+            font-size: 14px;
+            color: #222;
             font-weight: 400;
-            white-space: nowrap;
             letter-spacing: 0.2px;
+            white-space: nowrap;
         }
 
-        /* Área direita - logo e texto */
-        .recaptcha-right {
+        /* Lado direito: logo e textos */
+        .recaptcha-branding {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            flex-shrink: 0;
             text-align: center;
+            flex-shrink: 0;
         }
 
-        .recaptcha-logo-icon {
+        .recaptcha-logo {
             width: 36px;
             height: 36px;
-            /* Ícone SVG inline de escudo com seta circular */
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        .recaptcha-logo-icon svg {
+        .recaptcha-logo svg {
             width: 32px;
             height: 32px;
+            display: block;
+            margin: 0 auto;
         }
 
-        .recaptcha-brand {
+        .recaptcha-brand-text {
             font-size: 9px;
             color: #555;
-            letter-spacing: 0.3px;
-            line-height: 1;
+            line-height: 1.2;
             text-align: center;
+            margin-top: 1px;
         }
 
-        .recaptcha-brand span {
-            display: block;
+        .recaptcha-brand-text .links {
             font-size: 8px;
-            color: #888;
+            color: #777;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 1px;
         }
 
-        /* Status de verificação */
-        .verification-status {
-            text-align: center;
-            font-size: 13px;
-            padding: 0 18px 14px;
-            color: var(--text-gray);
+        .recaptcha-brand-text .links span {
+            cursor: pointer;
+            text-decoration: none;
+            color: #777;
+        }
+
+        .recaptcha-brand-text .links span:hover {
+            color: #333;
+            text-decoration: underline;
+        }
+
+        /* Status abaixo do card */
+        .recaptcha-status {
+            font-size: 12px;
+            padding: 0 14px 10px;
+            color: #757575;
             min-height: 20px;
             transition: color 0.3s;
         }
 
-        .verification-status.success {
-            color: var(--success-green);
+        .recaptcha-status.success {
+            color: #1e8e3e;
             font-weight: 500;
         }
-        .verification-status.error {
-            color: var(--error-red);
+        .recaptcha-status.error {
+            color: #d93025;
             font-weight: 500;
         }
-        .verification-status.info {
-            color: var(--recaptcha-blue);
+        .recaptcha-status.info {
+            color: #1a73e8;
         }
 
-        /* Modal do desafio */
+        /* Overlay do desafio (fundo escurecido) */
         .challenge-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.55);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            animation: fadeIn 0.2s ease;
+            animation: fadeIn 0.15s ease;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
+        .challenge-overlay.hidden {
+            display: none;
+        }
+
+        /* Modal do desafio */
         .challenge-modal {
             background: #fff;
             border-radius: 8px;
             width: 100%;
-            max-width: 380px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            box-shadow: 0 24px 38px rgba(0, 0, 0, 0.25), 0 10px 20px rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes slideUp {
@@ -268,44 +260,46 @@
         }
 
         .challenge-header {
-            background: var(--recaptcha-blue);
+            background: #1a73e8;
             color: #fff;
-            padding: 14px 18px;
+            padding: 16px 20px;
             font-size: 15px;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 10px;
+            letter-spacing: 0.3px;
         }
 
-        .challenge-header .shield-icon {
+        .challenge-header .icon {
             font-size: 20px;
+            flex-shrink: 0;
         }
 
         .challenge-body {
-            padding: 20px 18px;
+            padding: 24px 20px 20px;
             text-align: center;
         }
 
         .challenge-question {
             font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
         }
 
         .challenge-subtitle {
             font-size: 13px;
-            color: #777;
-            margin-bottom: 18px;
+            color: #5f6368;
+            margin-bottom: 20px;
         }
 
-        .challenge-input-group {
+        .challenge-input-wrapper {
             display: flex;
-            gap: 10px;
             justify-content: center;
             align-items: center;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -314,50 +308,37 @@
             height: 48px;
             font-size: 22px;
             text-align: center;
-            border: 2px solid #d0d0d0;
-            border-radius: 6px;
+            border: 2px solid #dadce0;
+            border-radius: 4px;
             outline: none;
-            transition: border-color 0.2s;
-            font-weight: 600;
-            color: #333;
-            background: #fafafa;
+            font-weight: 500;
+            color: #202124;
+            background: #fff;
+            transition: border 0.2s, box-shadow 0.2s;
+            letter-spacing: 1px;
         }
 
         .challenge-input:focus {
-            border-color: var(--recaptcha-blue);
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
         }
 
-        .challenge-input.error-input {
-            border-color: var(--error-red);
-            animation: shake 0.5s ease;
-            background: #fff5f5;
+        .challenge-input.error {
+            border-color: #d93025;
+            animation: shake 0.4s ease;
+            background: #fef7f7;
         }
 
         @keyframes shake {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-            20% {
-                transform: translateX(-8px);
-            }
-            40% {
-                transform: translateX(8px);
-            }
-            60% {
-                transform: translateX(-5px);
-            }
-            80% {
-                transform: translateX(5px);
-            }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
         }
 
         .challenge-btn {
             display: inline-block;
-            padding: 10px 28px;
-            background: var(--recaptcha-blue);
+            padding: 10px 24px;
+            background: #1a73e8;
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -365,31 +346,34 @@
             font-weight: 500;
             cursor: pointer;
             letter-spacing: 0.3px;
-            transition: background 0.2s, transform 0.1s;
-            margin-top: 14px;
+            transition: background 0.2s, box-shadow 0.2s;
+            margin-top: 18px;
+            min-width: 120px;
         }
 
         .challenge-btn:hover {
-            background: var(--recaptcha-blue-hover);
+            background: #1765cc;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
         .challenge-btn:active {
-            transform: scale(0.96);
+            background: #1557b0;
+            transform: scale(0.97);
         }
 
         .challenge-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 18px;
-            border-top: 1px solid #eee;
+            padding: 12px 20px;
+            border-top: 1px solid #e8eaed;
             font-size: 12px;
-            color: #999;
+            color: #80868b;
         }
 
         .challenge-refresh {
             background: none;
             border: none;
-            color: var(--recaptcha-blue);
+            color: #1a73e8;
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
@@ -403,379 +387,309 @@
         }
 
         /* Responsivo */
-        @media (max-width: 400px) {
-            .recaptcha-box {
-                padding: 12px 14px;
-                gap: 8px;
+        @media (max-width: 360px) {
+            .g-recaptcha {
+                width: 100%;
+            }
+            .recaptcha-checkbox-border {
+                padding: 10px 12px;
             }
             .recaptcha-label {
-                font-size: 14px;
-            }
-            .custom-checkbox {
-                width: 24px;
-                height: 24px;
+                font-size: 13px;
             }
             .challenge-modal {
                 max-width: 95vw;
             }
-            .challenge-question {
-                font-size: 16px;
-            }
-        }
-
-        /* Ocultar overlays */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Botão de reset opcional */
-        .reset-link {
-            display: block;
-            text-align: center;
-            margin-top: 16px;
-            color: var(--recaptcha-blue);
-            font-size: 13px;
-            cursor: pointer;
-            text-decoration: underline;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-        .reset-link:hover {
-            opacity: 1;
         }
     </style>
 </head>
 <body>
 
-    <div style="text-align: center;">
-        <!-- Card principal estilo reCAPTCHA -->
-        <div class="recaptcha-wrapper" id="recaptchaCard">
-            <!-- Linha principal com checkbox -->
-            <div class="recaptcha-box" id="recaptchaBox" title="Clique para verificar">
-                <!-- Lado esquerdo: checkbox + label -->
-                <div class="recaptcha-left">
-                    <div class="custom-checkbox" id="customCheckbox">
-                        <span class="check-icon">✓</span>
-                    </div>
-                    <div class="spinner" id="spinner"></div>
-                    <span class="recaptcha-label">Não sou robô</span>
+    <div class="g-recaptcha" id="recaptchaCard">
+        <!-- Linha do checkbox -->
+        <div class="recaptcha-checkbox-border" id="recaptchaBox" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="recaptcha-checkbox-left">
+                <div class="recaptcha-checkbox" id="customCheckbox">
+                    <span class="check-mark">✓</span>
                 </div>
-
-                <!-- Lado direito: logo -->
-                <div class="recaptcha-right">
-                    <div class="recaptcha-logo-icon">
-                        <!-- Ícone SVG: escudo com seta circular (estilo reCAPTCHA) -->
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L3 7V11C3 16.5 6.5 21.5 12 23C17.5 21.5 21 16.5 21 11V7L12 2Z"
-                            fill="#4A90D9" stroke="#3A7BC8" stroke-width="1.2" stroke-linejoin="round"/>
-                            <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2.5"
-                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            <circle cx="18" cy="5" r="5" fill="#34A853" stroke="white" stroke-width="1.5"/>
-                            <path d="M16.5 3.5L18 5L20 2.5" stroke="white" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        </svg>
-                    </div>
-                    <div class="recaptcha-brand">
-                        reCAPTCHA
-                        <span>Privacidade · Termos</span>
+                <div class="recaptcha-spinner" id="spinner">
+                    <div class="circle"></div>
+                </div>
+                <span class="recaptcha-label">Não sou robô</span>
+            </div>
+            <div class="recaptcha-branding">
+                <div class="recaptcha-logo">
+                    <!-- Logo reCAPTCHA (escudo com seta circular) -->
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L3 7V11C3 16.5 6.5 21.5 12 23C17.5 21.5 21 16.5 21 11V7L12 2Z"
+                        fill="#4A90D9" stroke="#3A7BC8" stroke-width="1.2" stroke-linejoin="round"/>
+                        <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <circle cx="18" cy="5" r="5" fill="#34A853" stroke="white" stroke-width="1.5"/>
+                        <path d="M16.5 3.5L18 5L20 2.5" stroke="white" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="recaptcha-brand-text">
+                    reCAPTCHA
+                    <div class="links">
+                        <span>Privacidade</span>
+                        <span>Termos</span>
                     </div>
                 </div>
             </div>
-            <!-- Mensagem de status -->
-            <div class="verification-status" id="statusMsg"></div>
         </div>
-
-        <!-- Link para resetar -->
-        <div class="reset-link" id="resetLink" style="display:none;" onclick="resetVerification()">
-            ↻ Refazer verificação
-        </div>
+        <div class="recaptcha-status" id="statusMsg"></div>
     </div>
 
-    <!-- Modal do desafio (inicialmente oculto) -->
+    <!-- Modal do desafio -->
     <div class="challenge-overlay hidden" id="challengeOverlay">
         <div class="challenge-modal">
             <div class="challenge-header">
-                <span class="shield-icon">🛡️</span>
-                Verificação de segurança
+                <span class="icon">🛡️</span> Verificação de segurança
             </div>
             <div class="challenge-body">
-                <p class="challenge-question" id="challengeQuestion">Quanto é 7 + 4?</p>
-                <p class="challenge-subtitle">Digite a resposta para continuar</p>
-                <div class="challenge-input-group">
-                    <input type="text"
-                    class="challenge-input"
-                    id="challengeInput"
-                    inputmode="numeric"
-                    maxlength="3"
-                    placeholder="?"
-                    autocomplete="off"
-                    onkeydown="if(event.key==='Enter')verifyChallenge()">
+                <div class="challenge-question" id="challengeQuestion">Quanto é 8 + 5?</div>
+                <div class="challenge-subtitle">Digite o resultado para continuar</div>
+                <div class="challenge-input-wrapper">
+                    <input type="text" class="challenge-input" id="challengeInput" inputmode="numeric" maxlength="3" placeholder="?" autocomplete="off">
                 </div>
-                <button class="challenge-btn" onclick="verifyChallenge()">
-                    Verificar
-                </button>
+                <button class="challenge-btn" id="challengeVerifyBtn">Verificar</button>
             </div>
             <div class="challenge-footer">
                 <span>Proteção automática</span>
-                <button class="challenge-refresh" onclick="refreshChallenge()">
-                    ↻ Novo desafio
-                </button>
+                <button class="challenge-refresh" id="refreshChallengeBtn">↻ Novo desafio</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== CONFIGURAÇÃO ====================
-        // URL para onde o usuário será redirecionado após passar na verificação
-        const REDIRECT_URL = 'https://www.google.com.br';
-        // Tempo de espera (em ms) após aprovação antes de redirecionar
-        const REDIRECT_DELAY = 1800;
-        // =====================================================
+        (function() {
+            // ==================== CONFIGURAÇÃO ====================
+            const REDIRECT_URL = 'https://www.casanissi.com.br';
+            const REDIRECT_DELAY = 1800; // ms
+            // =====================================================
 
-        // Elementos do DOM
-        const recaptchaBox = document.getElementById('recaptchaBox');
-        const customCheckbox = document.getElementById('customCheckbox');
-        const spinnerEl = document.getElementById('spinner');
-        const statusMsg = document.getElementById('statusMsg');
-        const resetLink = document.getElementById('resetLink');
-        const challengeOverlay = document.getElementById('challengeOverlay');
-        const challengeQuestion = document.getElementById('challengeQuestion');
-        const challengeInput = document.getElementById('challengeInput');
-        const recaptchaCard = document.getElementById('recaptchaCard');
+            // Elementos DOM
+            const recaptchaBox = document.getElementById('recaptchaBox');
+            const customCheckbox = document.getElementById('customCheckbox');
+            const spinnerEl = document.getElementById('spinner');
+            const statusMsg = document.getElementById('statusMsg');
+            const challengeOverlay = document.getElementById('challengeOverlay');
+            const challengeQuestion = document.getElementById('challengeQuestion');
+            const challengeInput = document.getElementById('challengeInput');
+            const verifyBtn = document.getElementById('challengeVerifyBtn');
+            const refreshBtn = document.getElementById('refreshChallengeBtn');
+            const recaptchaCard = document.getElementById('recaptchaCard');
 
-        // Estado
-        let isVerified = false;
-        let isProcessing = false;
-        let currentAnswer = null;
-        let challengeActive = false;
+            // Estado
+            let isVerified = false;
+            let isProcessing = false;
+            let challengeActive = false;
+            let currentAnswer = null;
 
-        // Gerar um desafio matemático aleatório
-        function generateChallenge() {
-            const operations = [
-                { op: '+', calc: (a, b) => a + b, symbol: '+' },
-                { op: '-', calc: (a, b) => a - b, symbol: '−' },
-                { op: '×', calc: (a, b) => a * b, symbol: '×' },
-            ];
-
-            const chosen = operations[Math.floor(Math.random() * operations.length)];
-            let a, b, answer;
-
-            switch (chosen.op) {
-                case '+':
-                    a = Math.floor(Math.random() * 20) + 1; // 1-20
-                    b = Math.floor(Math.random() * 20) + 1; // 1-20
-                    answer = a + b;
-                    break;
-                case '-':
-                    a = Math.floor(Math.random() * 20) + 5; // 5-24
-                    b = Math.floor(Math.random() * a) + 1; // 1 até a
-                    answer = a - b;
-                    break;
-                case '×':
-                    a = Math.floor(Math.random() * 10) + 1; // 1-10
-                    b = Math.floor(Math.random() * 10) + 1; // 1-10
-                    answer = a * b;
-                    break;
-                default:
-                    a = 5;
-                    b = 3;
-                    answer = 8;
+            // Gerar desafio matemático aleatório
+            function generateChallenge() {
+                const ops = [
+                    { symbol: '+', calc: (a,b) => a+b },
+                    { symbol: '−', calc: (a,b) => a-b },
+                    { symbol: '×', calc: (a,b) => a*b }
+                ];
+                const op = ops[Math.floor(Math.random() * ops.length)];
+                let a, b;
+                if (op.symbol === '+') {
+                    a = Math.floor(Math.random() * 15) + 1;
+                    b = Math.floor(Math.random() * 15) + 1;
+                } else if (op.symbol === '−') {
+                    a = Math.floor(Math.random() * 20) + 5;
+                    b = Math.floor(Math.random() * a) + 1;
+                } else {
+                    a = Math.floor(Math.random() * 10) + 1;
+                    b = Math.floor(Math.random() * 10) + 1;
+                }
+                return {
+                    text: `Quanto é ${a} ${op.symbol} ${b}?`,
+                    answer: op.calc(a, b)
+                };
             }
 
-            return {
-                questionText: `Quanto é ${a} ${chosen.symbol} ${b}?`,
-                answer: answer,
-            };
-        }
-
-        // Atualizar o texto do desafio no modal
-        function refreshChallenge() {
-            const challenge = generateChallenge();
-            currentAnswer = challenge.answer;
-            challengeQuestion.textContent = challenge.questionText;
-            challengeInput.value = '';
-            challengeInput.classList.remove('error-input');
-            challengeInput.focus();
-            // Pequeno reset visual
-            challengeInput.style.borderColor = '#d0d0d0';
-            challengeInput.style.background = '#fafafa';
-        }
-
-        // Mostrar o modal do desafio
-        function showChallenge() {
-            if (isVerified || isProcessing) return;
-            challengeActive = true;
-            refreshChallenge();
-            challengeOverlay.classList.remove('hidden');
-            statusMsg.textContent = 'Resolva o desafio para continuar';
-            statusMsg.className = 'verification-status info';
-            // Esconder spinner, mostrar checkbox normal
-            spinnerEl.classList.remove('active');
-            customCheckbox.style.display = 'flex';
-            customCheckbox.classList.remove('checked', 'loading');
-            // Focar no input após animação
-            setTimeout(() => {
-                challengeInput.focus();
-            }, 350);
-        }
-
-        // Fechar o modal do desafio
-        function hideChallenge() {
-            challengeOverlay.classList.add('hidden');
-            challengeActive = false;
-            challengeInput.value = '';
-        }
-
-        // Verificar a resposta do desafio
-        function verifyChallenge() {
-            if (!challengeActive) return;
-
-            const userAnswer = parseInt(challengeInput.value.trim(), 10);
-
-            if (isNaN(userAnswer)) {
-                // Entrada inválida
-                challengeInput.classList.add('error-input');
-                statusMsg.textContent = 'Digite um número válido';
-                statusMsg.className = 'verification-status error';
-                setTimeout(() => {
-                    challengeInput.classList.remove('error-input');
-                }, 600);
-                challengeInput.focus();
-                return;
-            }
-
-            if (userAnswer === currentAnswer) {
-                // Resposta correta!
-                hideChallenge();
-                approveVerification();
-            } else {
-                // Resposta errada
-                challengeInput.classList.add('error-input');
-                statusMsg.textContent = 'Resposta incorreta. Tente novamente.';
-                statusMsg.className = 'verification-status error';
+            function refreshChallenge() {
+                const ch = generateChallenge();
+                currentAnswer = ch.answer;
+                challengeQuestion.textContent = ch.text;
                 challengeInput.value = '';
+                challengeInput.classList.remove('error');
                 challengeInput.focus();
-                setTimeout(() => {
-                    challengeInput.classList.remove('error-input');
-                }, 600);
-                // Gerar novo desafio para não ficar repetitivo
-                setTimeout(() => {
-                    if (challengeActive) {
-                        refreshChallenge();
-                    }
-                }, 800);
             }
-        }
 
-        // Aprovar verificação
-        function approveVerification() {
-            isVerified = true;
-            isProcessing = false;
-            challengeActive = false;
+            function showChallenge() {
+                if (isVerified || isProcessing) return;
+                challengeActive = true;
+                refreshChallenge();
+                challengeOverlay.classList.remove('hidden');
+                statusMsg.textContent = 'Resolva o desafio para provar que você não é um robô';
+                statusMsg.className = 'recaptcha-status info';
+                // Restaurar estado visual do checkbox: esconder spinner
+                spinnerEl.classList.remove('active');
+                customCheckbox.style.display = 'flex';
+                customCheckbox.classList.remove('checked');
+                setTimeout(() => challengeInput.focus(), 300);
+            }
 
-            // Marcar checkbox como verificado
-            customCheckbox.classList.add('checked');
-            customCheckbox.style.display = 'flex';
-            spinnerEl.classList.remove('active');
-            customCheckbox.classList.remove('loading');
+            function hideChallenge() {
+                challengeOverlay.classList.add('hidden');
+                challengeActive = false;
+                challengeInput.value = '';
+                challengeInput.classList.remove('error');
+            }
 
-            // Atualizar status
-            statusMsg.textContent = '✅ Verificação concluída! Redirecionando...';
-            statusMsg.className = 'verification-status success';
-
-            // Mostrar link de reset
-            resetLink.style.display = 'block';
-
-            // Desabilitar clique no card
-            recaptchaCard.style.pointerEvents = 'none';
-            recaptchaCard.style.opacity = '0.85';
-
-            // Redirecionar após delay
-            setTimeout(() => {
-                statusMsg.textContent = '✅ Redirecionando agora...';
-                window.location.href = REDIRECT_URL;
-            }, REDIRECT_DELAY);
-        }
-
-        // Resetar toda a verificação
-        function resetVerification() {
-            isVerified = false;
-            isProcessing = false;
-            challengeActive = false;
-            hideChallenge();
-            customCheckbox.classList.remove('checked', 'loading');
-            customCheckbox.style.display = 'flex';
-            spinnerEl.classList.remove('active');
-            statusMsg.textContent = '';
-            statusMsg.className = 'verification-status';
-            resetLink.style.display = 'none';
-            recaptchaCard.style.pointerEvents = 'auto';
-            recaptchaCard.style.opacity = '1';
-            challengeInput.value = '';
-            challengeInput.classList.remove('error-input');
-            currentAnswer = null;
-        }
-
-        // Clique no card principal
-        recaptchaBox.addEventListener('click', function(e) {
-            if (isVerified || isProcessing || challengeActive) return;
-
-            // Iniciar processamento
-            isProcessing = true;
-            statusMsg.textContent = 'Verificando...';
-            statusMsg.className = 'verification-status info';
-
-            // Mostrar spinner
-            customCheckbox.classList.add('loading');
-            spinnerEl.classList.add('active');
-            customCheckbox.style.display = 'none';
-
-            // Simular tempo de "análise" e então mostrar desafio
-            const analysisTime = 800 + Math.random() * 1200; // 0.8 a 2 segundos
-
-            setTimeout(() => {
-                if (!isVerified && isProcessing) {
-                    showChallenge();
-                    isProcessing = false;
+            function verifyAnswer() {
+                if (!challengeActive) return;
+                const answer = parseInt(challengeInput.value.trim(), 10);
+                if (isNaN(answer)) {
+                    challengeInput.classList.add('error');
+                    statusMsg.textContent = 'Por favor, digite um número válido.';
+                    statusMsg.className = 'recaptcha-status error';
+                    setTimeout(() => challengeInput.classList.remove('error'), 500);
+                    challengeInput.focus();
+                    return;
                 }
-            }, analysisTime);
-        });
-
-        // Fechar modal ao clicar fora (no overlay)
-        challengeOverlay.addEventListener('click', function(e) {
-            if (e.target === challengeOverlay) {
-                if (!isVerified) {
+                if (answer === currentAnswer) {
+                    // Resposta correta
                     hideChallenge();
-                    isProcessing = false;
-                    customCheckbox.classList.remove('loading');
-                    customCheckbox.style.display = 'flex';
-                    spinnerEl.classList.remove('active');
-                    statusMsg.textContent = 'Verificação cancelada. Clique para tentar novamente.';
-                    statusMsg.className = 'verification-status';
+                    approveVerification();
+                } else {
+                    // Resposta incorreta
+                    challengeInput.classList.add('error');
+                    statusMsg.textContent = 'Resposta incorreta. Tente novamente.';
+                    statusMsg.className = 'recaptcha-status error';
                     challengeInput.value = '';
-                    currentAnswer = null;
-                    challengeActive = false;
+                    setTimeout(() => challengeInput.classList.remove('error'), 500);
+                    // Gerar novo desafio para evitar repetição
+                    setTimeout(() => {
+                        if (challengeActive) refreshChallenge();
+                    }, 600);
+                    challengeInput.focus();
                 }
             }
-        });
 
-        // Prevenir envio acidental do formulário ao pressionar Enter no input
-        challengeInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                verifyChallenge();
+            function approveVerification() {
+                isVerified = true;
+                isProcessing = false;
+                challengeActive = false;
+
+                // Exibir checkbox verde com check
+                customCheckbox.classList.add('checked');
+                customCheckbox.style.display = 'flex';
+                spinnerEl.classList.remove('active');
+
+                statusMsg.textContent = '✅ Verificação concluída. Redirecionando...';
+                statusMsg.className = 'recaptcha-status success';
+
+                // Desabilitar interação com o card
+                recaptchaCard.style.pointerEvents = 'none';
+                recaptchaCard.style.opacity = '0.85';
+
+                // Redirecionamento
+                setTimeout(() => {
+                    statusMsg.textContent = '✅ Redirecionando agora...';
+                    window.location.href = REDIRECT_URL;
+                }, REDIRECT_DELAY);
             }
-        });
 
-        // Impedir que clique no modal feche ele
-        document.querySelector('.challenge-modal').addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+            function resetVerification() {
+                isVerified = false;
+                isProcessing = false;
+                challengeActive = false;
+                hideChallenge();
+                customCheckbox.classList.remove('checked');
+                customCheckbox.style.display = 'flex';
+                spinnerEl.classList.remove('active');
+                statusMsg.textContent = '';
+                statusMsg.className = 'recaptcha-status';
+                recaptchaCard.style.pointerEvents = 'auto';
+                recaptchaCard.style.opacity = '1';
+                currentAnswer = null;
+                challengeInput.value = '';
+                challengeInput.classList.remove('error');
+            }
 
-        // Inicialização
-        console.log('🛡️ Verificação de segurança pronta.');
-        console.log('➡️ URL de destino:', REDIRECT_URL);
-        console.log('ℹ️ Clique em "Não sou robô" para iniciar a verificação.');
+            // Evento de clique no checkbox principal
+            recaptchaBox.addEventListener('click', function(e) {
+                if (isVerified || isProcessing || challengeActive) return;
+                isProcessing = true;
+                statusMsg.textContent = 'Verificando...';
+                statusMsg.className = 'recaptcha-status info';
+
+                // Mostrar spinner e esconder checkbox
+                customCheckbox.style.display = 'none';
+                spinnerEl.classList.add('active');
+
+                // Simular análise (tempo aleatório)
+                const delay = 700 + Math.random() * 1300;
+                setTimeout(() => {
+                    if (!isVerified && isProcessing) {
+                        showChallenge();
+                        isProcessing = false;
+                    }
+                }, delay);
+            });
+
+            // Acessibilidade: tecla Enter ou Espaço no card
+            recaptchaBox.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    recaptchaBox.click();
+                }
+            });
+
+            // Botão Verificar do modal
+            verifyBtn.addEventListener('click', verifyAnswer);
+
+            // Enter no input do desafio
+            challengeInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyAnswer();
+                }
+            });
+
+            // Botão Novo desafio
+            refreshBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (challengeActive) {
+                    refreshChallenge();
+                    statusMsg.textContent = 'Novo desafio gerado.';
+                    statusMsg.className = 'recaptcha-status info';
+                }
+            });
+
+            // Fechar modal clicando fora (no overlay)
+            challengeOverlay.addEventListener('click', function(e) {
+                if (e.target === challengeOverlay) {
+                    if (challengeActive && !isVerified) {
+                        hideChallenge();
+                        isProcessing = false;
+                        customCheckbox.style.display = 'flex';
+                        spinnerEl.classList.remove('active');
+                        statusMsg.textContent = 'Verificação cancelada. Clique novamente para tentar.';
+                        statusMsg.className = 'recaptcha-status';
+                        currentAnswer = null;
+                    }
+                }
+            });
+
+            // Impedir fechamento ao clicar dentro do modal
+            document.querySelector('.challenge-modal').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // (Opcional) Permitir resetar clicando no status em caso de sucesso (mas sem redirecionar)
+            // Não implementado para manter a simplicidade.
+
+            console.log('🛡️ reCAPTCHA simulado pronto.');
+            console.log('➡️ Destino:', REDIRECT_URL);
+        })();
     </script>
 </body>
 </html>
